@@ -59,7 +59,6 @@ public class DoublyLinkedList<T> implements IList<T> {
 
     @Override
     public @NotNull T get(final int index) throws IndexOutOfBoundsException {
-        checkSizeAndBounds(index);
         return getNode(index).data;
     }
 
@@ -81,6 +80,9 @@ public class DoublyLinkedList<T> implements IList<T> {
     }
 
     private void checkSizeAndBounds(int index) throws IndexOutOfBoundsException, NoSuchElementException {
+        if (index == 0 && size() == 1) {
+            return;
+        }
         if (isEmpty()) {
             throw new NoSuchElementException("List is empty");
         }
@@ -133,11 +135,11 @@ public class DoublyLinkedList<T> implements IList<T> {
 
     @Override
     public void pushAt(int index, @NotNull T item) {
+        checkSizeAndBounds(index);
         if (isEmpty() && index == 0) {
             pushFront(item);
             return;
         }
-        checkSizeAndBounds(index);
         Node newNode = new Node(item);
         Node oldNode = getNode(index);
         Node prev = oldNode.getPrev();
@@ -172,10 +174,10 @@ public class DoublyLinkedList<T> implements IList<T> {
 
     @Override
     public @NotNull T popAt(int index) {
+        checkSizeAndBounds(index);
         if (index == 0 && size() == 1) {
             return popFront();
         }
-        checkSizeAndBounds(index);
         Node temp = getNode(index);
         T data = temp.data;
         Node prev = temp.getPrev();
@@ -200,6 +202,7 @@ public class DoublyLinkedList<T> implements IList<T> {
 
     class DoublyLinkedListIterator implements Iterator<T> {
         private Node current;
+
         @Override
         public boolean hasNext() {
             return current.next != null;
@@ -207,7 +210,9 @@ public class DoublyLinkedList<T> implements IList<T> {
 
         @Override
         public T next() {
-            if (!hasNext()) { throw new NoSuchElementException(); }
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
             current = current.next;
             return current.data;
         }
