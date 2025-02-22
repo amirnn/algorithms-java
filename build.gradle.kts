@@ -10,8 +10,9 @@ repositories {
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    implementation("org.jetbrains:annotations:latest.release")
+    testImplementation(platform("org.junit:junit-bom:latest.release"))
+    testImplementation("org.junit.jupiter:junit-jupiter:latest.release")
 }
 
 tasks.test {
