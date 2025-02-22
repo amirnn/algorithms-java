@@ -1,5 +1,6 @@
 package com.blue.datastructures;
 
+import jdk.jshell.spi.ExecutionControl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -35,7 +36,10 @@ public class DynamicArray<T> implements IList<T> {
     }
 
     private int getActualIndex(int index) {
-        return (index + head + bufferSize) % bufferExtensionScale;
+        int indexMod = index % bufferSize;
+        int headMod = head % bufferSize;
+        int secondMod = (headMod + bufferSize) % bufferSize;
+        return indexMod + secondMod;
     }
 
     private void checkSizeAndBounds(int index) throws IndexOutOfBoundsException, NoSuchElementException {
@@ -52,24 +56,44 @@ public class DynamicArray<T> implements IList<T> {
 
     @Override
     public @NotNull T getHead() throws NoSuchElementException {
-        if (isEmpty()) { throw new NoSuchElementException("Array is empty"); }
+        if (isEmpty()) {
+            throw new NoSuchElementException("Array is empty");
+        }
         return data[getActualIndex(0)];
     }
 
     @Override
     public @NotNull T getTail() {
-        if (isEmpty()) { throw new NoSuchElementException("Array is empty"); }
+        if (isEmpty()) {
+            throw new NoSuchElementException("Array is empty");
+        }
         return data[getActualIndex(size() - 1)];
     }
 
     @Override
     public void pushFront(@NotNull T item) {
-        
+        if (isBufferFull()) extendBufferAndCopyData();
+        if (isEmpty()) {
+            data[head] = item;
+        } else {
+            --head;
+            int t = getActualIndex(0);
+            data[t] = item;
+        }
+        numberOfItems++;
     }
 
     @Override
     public void pushBack(@NotNull T item) {
-
+        if (isBufferFull()) extendBufferAndCopyData();
+        if (isEmpty()) {
+            data[tail] = item;
+        } else {
+            ++tail;
+            int t = getActualIndex(size());
+            data[t] = item;
+        }
+        numberOfItems++;
     }
 
     @Override
@@ -79,26 +103,70 @@ public class DynamicArray<T> implements IList<T> {
 
     @Override
     public @NotNull T popFront() throws NoSuchElementException {
-        return null;
+        if (isEmpty()) throw new NoSuchElementException("Array is empty");
+        if (isBufferNearlyEmpty()) shrinkBufferAndCopyData();
+        T temp = data[getActualIndex(0)];
+        data[getActualIndex(0)] = null;
+        if (size() > 1) ++head;
+        --numberOfItems;
+        return temp;
     }
 
     @Override
     public @NotNull T popBack() throws NoSuchElementException {
-        return null;
+        if (isEmpty()) throw new NoSuchElementException("Array is empty");
+        if (isBufferNearlyEmpty()) shrinkBufferAndCopyData();
+        T temp = data[getActualIndex(size() - 1)];
+        data[getActualIndex(size() - 1)] = null;
+        if (size() > 1) --tail;
+        --numberOfItems;
+        return temp;
     }
 
     @Override
     public @NotNull T popAt(int index) throws IndexOutOfBoundsException, NoSuchElementException {
         checkSizeAndBounds(index);
+        if (index == 0) {
+            return popFront();
+        } else if (index == size() - 1) {
+            return popBack();
+        }
         T temp = get(index);
+        data[getActualIndex(index)] = null;
         // exchange with null
-        return null;
+        if (index <= size() / 2) {
+            for (int i = index; i > 0; --i) {
+                exchange(i, i - 1);
+            }
+            ++head;
+        } else {
+            for (int i = index; i < size() - 1; ++i) {
+                exchange(i, i + 1);
+            }
+            --tail;
+        }
+        --numberOfItems;
+        return temp;
+    }
+
+    private void exchange(int i, int j) {
+        T temp = data[i];
+        data[i] = data[j];
+        data[j] = temp;
     }
 
     @Override
     public void set(int index, @NotNull T value) throws IndexOutOfBoundsException, NoSuchElementException {
         checkSizeAndBounds(index);
         data[getActualIndex(index)] = value;
+    }
+
+    private boolean isBufferFull() {
+        return size() >= bufferSize;
+    }
+
+    private boolean isBufferNearlyEmpty() {
+        return numberOfItems <= bufferSize / itemShrinkRatio;
     }
 
     /**
@@ -125,7 +193,7 @@ public class DynamicArray<T> implements IList<T> {
     private void shrinkBufferAndCopyData() {
         int numberOfItems = size();
         int shrinkSize = bufferSize / bufferShrinkScale;
-        assert numberOfItems <= shrinkSize / itemShrinkRatio;
+        assert isBufferNearlyEmpty() : "Buffer is not nearly empty";
         T[] newData = (T[]) new Object[shrinkSize];
         for (int i = 0; i < numberOfItems; ++i) {
             newData[i] = data[getActualIndex(i)];
@@ -183,11 +251,11 @@ public class DynamicArray<T> implements IList<T> {
     }
 
     public class DynamicArrayIterator implements Iterator<T> {
-        private int currentIndex = head;
+        private int currentIndex = 0;
 
         @Override
         public boolean hasNext() {
-            return currentIndex < tail;
+            return currentIndex < size() - 1;
         }
 
         @Override
@@ -196,7 +264,7 @@ public class DynamicArray<T> implements IList<T> {
                 throw new NoSuchElementException("No more elements");
             }
             ++currentIndex;
-            data[getActualIndex(currentIndex)] = data[currentIndex];
+            return data[getActualIndex(currentIndex)];
         }
     }
 }
