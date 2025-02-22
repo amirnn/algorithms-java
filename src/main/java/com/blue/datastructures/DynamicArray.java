@@ -29,28 +29,30 @@ public class DynamicArray<T> implements IList<T> {
     }
 
     @Override
-    public @NotNull T get(int index) {
+    public @NotNull T get(int index) throws IndexOutOfBoundsException, NoSuchElementException {
+        checkSizeAndBounds(index);
         int t = getActualIndex(index);
         assert data[t] != null : "data is null";
         return data[t];
     }
 
     private int getActualIndex(int index) {
-        int indexMod = index % bufferSize;
-        int headMod = head % bufferSize;
-        int secondMod = (headMod + bufferSize) % bufferSize;
-        return indexMod + secondMod;
+        final int indexMod = index % bufferSize;
+        final int headMod = head % bufferSize;
+        final int secondMod = (headMod + bufferSize) % bufferSize;
+        final int actualIndex = (indexMod + secondMod) % bufferSize;
+        return actualIndex;
     }
 
     private void checkSizeAndBounds(int index) throws IndexOutOfBoundsException, NoSuchElementException {
         if (index == 0 && size() == 1) {
             return;
         }
-        if (isEmpty()) {
-            throw new NoSuchElementException("Array is empty");
-        }
         if (index < 0 || index >= numberOfItems) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size());
+        }
+        if (isEmpty()) {
+            throw new NoSuchElementException("Array is empty");
         }
     }
 
@@ -63,7 +65,7 @@ public class DynamicArray<T> implements IList<T> {
     }
 
     @Override
-    public @NotNull T getTail() {
+    public @NotNull T getTail() throws NoSuchElementException {
         if (isEmpty()) {
             throw new NoSuchElementException("Array is empty");
         }
@@ -99,6 +101,17 @@ public class DynamicArray<T> implements IList<T> {
     @Override
     public void pushAt(int index, @NotNull T item) throws IndexOutOfBoundsException, NoSuchElementException {
         checkSizeAndBounds(index);
+        if (index <= size() / 2) {
+            pushFront(item);
+            for (int i = 0; i < index; ++i) {
+                exchange(i, i + 1);
+            }
+        } else {
+            pushBack(item);
+            for (int i = size() - 1; i >= index; --i) {
+                exchange(i, i - 1);
+            }
+        }
     }
 
     @Override
@@ -149,10 +162,13 @@ public class DynamicArray<T> implements IList<T> {
         return temp;
     }
 
+    // should be used only with indexes in the range [0, #numberOfELements)
     private void exchange(int i, int j) {
-        T temp = data[i];
-        data[i] = data[j];
-        data[j] = temp;
+        int a_i = getActualIndex(i);
+        int a_j = getActualIndex(j);
+        T temp = data[a_i];
+        data[a_i] = data[a_j];
+        data[a_j] = temp;
     }
 
     @Override
@@ -255,7 +271,7 @@ public class DynamicArray<T> implements IList<T> {
 
         @Override
         public boolean hasNext() {
-            return currentIndex < size() - 1;
+            return currentIndex < size();
         }
 
         @Override
@@ -263,8 +279,9 @@ public class DynamicArray<T> implements IList<T> {
             if (!hasNext()) {
                 throw new NoSuchElementException("No more elements");
             }
+            T temp = data[getActualIndex(currentIndex)];
             ++currentIndex;
-            return data[getActualIndex(currentIndex)];
+            return temp;
         }
     }
 }

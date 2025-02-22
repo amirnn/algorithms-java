@@ -47,11 +47,11 @@ public class DoublyLinkedList<T> implements IList<T> {
         if (index == 0 && size() == 1) {
             return;
         }
-        if (isEmpty()) {
-            throw new NoSuchElementException("List is empty");
-        }
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+        if (isEmpty()) {
+            throw new NoSuchElementException("List is empty");
         }
     }
 
