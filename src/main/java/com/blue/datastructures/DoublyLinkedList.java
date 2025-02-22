@@ -7,42 +7,6 @@ import java.util.NoSuchElementException;
 
 public class DoublyLinkedList<T> implements IList<T> {
 
-    private class Node {
-        private @NotNull T data;
-        private Node next = null;
-        private Node prev = null;
-
-        public Node(@NotNull T data) {
-            this.data = data;
-        }
-
-        // getters
-        Node getNext() {
-            return next;
-        }
-
-        Node getPrev() {
-            return prev;
-        }
-
-        @NotNull T getData() {
-            return data;
-        }
-
-        // setters
-        void setNext(Node next) {
-            this.next = next;
-        }
-
-        void setPrev(Node prev) {
-            this.prev = prev;
-        }
-
-        void setData(@NotNull T data) {
-            this.data = data;
-        }
-    }
-
     private Node head = null;
     private Node tail = null;
     private int size;
@@ -198,6 +162,42 @@ public class DoublyLinkedList<T> implements IList<T> {
     @Override
     public @NotNull Iterator<T> iterator() {
         return new DoublyLinkedListIterator();
+    }
+
+    private class Node {
+        private @NotNull T data;
+        private Node next = null;
+        private Node prev = null;
+
+        public Node(@NotNull T data) {
+            this.data = data;
+        }
+
+        // getters
+        Node getNext() {
+            return next;
+        }
+
+        // setters
+        void setNext(Node next) {
+            this.next = next;
+        }
+
+        Node getPrev() {
+            return prev;
+        }
+
+        void setPrev(Node prev) {
+            this.prev = prev;
+        }
+
+        @NotNull T getData() {
+            return data;
+        }
+
+        void setData(@NotNull T data) {
+            this.data = data;
+        }
     }
 
     class DoublyLinkedListIterator implements Iterator<T> {
