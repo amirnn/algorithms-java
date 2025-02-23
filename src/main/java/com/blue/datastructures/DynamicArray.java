@@ -45,10 +45,7 @@ public class DynamicArray<T> implements IList<T> {
     }
 
     private void checkSizeAndBounds(int index) throws IndexOutOfBoundsException, NoSuchElementException {
-        if (index == 0 && size() == 1) {
-            return;
-        }
-        if (index < 0 || index >= numberOfItems) {
+        if (index < 0 || index >= size()) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size());
         }
         if (isEmpty()) {
@@ -267,11 +264,11 @@ public class DynamicArray<T> implements IList<T> {
     }
 
     public class DynamicArrayIterator implements Iterator<T> {
-        private int currentIndex = 0;
+        private int current = 0;
 
         @Override
         public boolean hasNext() {
-            return currentIndex < size();
+            return current < size() - 1;
         }
 
         @Override
@@ -279,9 +276,7 @@ public class DynamicArray<T> implements IList<T> {
             if (!hasNext()) {
                 throw new NoSuchElementException("No more elements");
             }
-            T temp = data[getActualIndex(currentIndex)];
-            ++currentIndex;
-            return temp;
+            return data[getActualIndex(++current)];
         }
     }
 }
