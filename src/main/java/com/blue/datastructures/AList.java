@@ -15,8 +15,7 @@ public abstract class AList<T> implements IList<T> {
     // implements knuth's linear shuffle
     @Override
     public void shuffle() {
-        final long currentTime = System.currentTimeMillis();
-        final Random r = new Random(currentTime);
+        final Random r = new Random();
         if (size() <= 1) return;
         for (int i = 1; i < size(); ++i) {
             final int target = r.nextInt(i+1);
