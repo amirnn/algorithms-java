@@ -15,10 +15,10 @@ public interface IList<T> extends Iterable<T> {
     T get(int index) throws IndexOutOfBoundsException, NoSuchElementException;
 
     @NotNull
-    T getHead() throws NoSuchElementException;
+    T head() throws NoSuchElementException;
 
     @NotNull
-    T getTail() throws NoSuchElementException;
+    T tail() throws NoSuchElementException;
 
     // setters
     void pushFront(@NotNull T item);

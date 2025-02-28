@@ -56,13 +56,13 @@ public class DoublyLinkedList<T> implements IList<T> {
     }
 
     @Override
-    public @NotNull T getHead() throws NoSuchElementException {
+    public @NotNull T head() throws NoSuchElementException {
         if (isEmpty()) throw new NoSuchElementException();
         return head.data;
     }
 
     @Override
-    public @NotNull T getTail() throws NoSuchElementException {
+    public @NotNull T tail() throws NoSuchElementException {
         if (isEmpty()) throw new NoSuchElementException();
         return tail.data;
     }

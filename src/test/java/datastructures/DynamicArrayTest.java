@@ -26,8 +26,8 @@ class DynamicArrayTest {
         array.pushBack(10);
         array.pushBack(20);
         assertEquals(2, array.size());
-        assertEquals(10, array.getHead());
-        assertEquals(20, array.getTail());
+        assertEquals(10, array.head());
+        assertEquals(20, array.tail());
     }
 
     @Test
@@ -35,8 +35,8 @@ class DynamicArrayTest {
         array.pushFront(10);
         array.pushFront(20);
         assertEquals(2, array.size());
-        assertEquals(20, array.getHead());
-        assertEquals(10, array.getTail());
+        assertEquals(20, array.head());
+        assertEquals(10, array.tail());
     }
 
     @Test
@@ -91,7 +91,7 @@ class DynamicArrayTest {
         array.popBack();
         array.popBack(); // Should trigger buffer shrinking
         assertEquals(1, array.size());
-        assertEquals(1, array.getHead());
+        assertEquals(1, array.head());
     }
 
     @Test

@@ -25,13 +25,13 @@ public class SortableDoublyLinkedList<T extends Comparable<T>> extends ASortable
     }
 
     @Override
-    public @NotNull T getHead() throws NoSuchElementException {
-        return dlinklist.getHead();
+    public @NotNull T head() throws NoSuchElementException {
+        return dlinklist.head();
     }
 
     @Override
-    public @NotNull T getTail() throws NoSuchElementException {
-        return dlinklist.getTail();
+    public @NotNull T tail() throws NoSuchElementException {
+        return dlinklist.tail();
     }
 
     @Override

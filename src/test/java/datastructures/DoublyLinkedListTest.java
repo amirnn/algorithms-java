@@ -30,8 +30,8 @@ class DoublyLinkedListTest {
         list.pushFront(10);
         assertFalse(list.isEmpty());
         assertEquals(1, list.size());
-        assertEquals(10, list.getHead());
-        assertEquals(10, list.getTail());
+        assertEquals(10, list.head());
+        assertEquals(10, list.tail());
     }
 
     @Test
@@ -39,8 +39,8 @@ class DoublyLinkedListTest {
         list.pushBack(20);
         assertFalse(list.isEmpty());
         assertEquals(1, list.size());
-        assertEquals(20, list.getHead());
-        assertEquals(20, list.getTail());
+        assertEquals(20, list.head());
+        assertEquals(20, list.tail());
     }
 
     @Test
@@ -49,8 +49,8 @@ class DoublyLinkedListTest {
         list.pushBack(20);
         list.pushFront(5);
         assertEquals(3, list.size());
-        assertEquals(5, list.getHead());
-        assertEquals(20, list.getTail());
+        assertEquals(5, list.head());
+        assertEquals(20, list.tail());
     }
 
     @Test
@@ -59,7 +59,7 @@ class DoublyLinkedListTest {
         list.pushBack(20);
         assertEquals(10, list.popFront());
         assertEquals(1, list.size());
-        assertEquals(20, list.getHead());
+        assertEquals(20, list.head());
     }
 
     @Test
@@ -68,7 +68,7 @@ class DoublyLinkedListTest {
         list.pushBack(20);
         assertEquals(20, list.popBack());
         assertEquals(1, list.size());
-        assertEquals(10, list.getHead());
+        assertEquals(10, list.head());
     }
 
     @Test

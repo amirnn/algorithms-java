@@ -1,6 +1,5 @@
 package com.blue.datastructures;
 
-import jdk.jshell.spi.ExecutionControl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -13,6 +12,7 @@ public class DynamicArray<T> implements IList<T> {
     private final int bufferShrinkScale = 2;
     private final int itemShrinkRatio = 4;
     private int bufferSize = initialBufferSize;
+    @SuppressWarnings("unchecked")
     private T[] data = (T[]) new Object[bufferSize];
     private int numberOfItems = 0;
     private int head = 0;
@@ -31,12 +31,12 @@ public class DynamicArray<T> implements IList<T> {
     @Override
     public @NotNull T get(int index) throws IndexOutOfBoundsException, NoSuchElementException {
         checkSizeAndBounds(index);
-        int t = getActualIndex(index);
+        int t = mappedIndex(index);
         assert data[t] != null : "data is null";
         return data[t];
     }
 
-    private int getActualIndex(int index) {
+    private int mappedIndex(int index) {
         final int indexMod = index % bufferSize;
         final int headMod = head % bufferSize;
         final int secondMod = (headMod + bufferSize) % bufferSize;
@@ -54,19 +54,19 @@ public class DynamicArray<T> implements IList<T> {
     }
 
     @Override
-    public @NotNull T getHead() throws NoSuchElementException {
+    public @NotNull T head() throws NoSuchElementException {
         if (isEmpty()) {
             throw new NoSuchElementException("Array is empty");
         }
-        return data[getActualIndex(0)];
+        return data[mappedIndex(0)];
     }
 
     @Override
-    public @NotNull T getTail() throws NoSuchElementException {
+    public @NotNull T tail() throws NoSuchElementException {
         if (isEmpty()) {
             throw new NoSuchElementException("Array is empty");
         }
-        return data[getActualIndex(size() - 1)];
+        return data[mappedIndex(size() - 1)];
     }
 
     @Override
@@ -76,7 +76,7 @@ public class DynamicArray<T> implements IList<T> {
             data[head] = item;
         } else {
             --head;
-            int t = getActualIndex(0);
+            int t = mappedIndex(0);
             data[t] = item;
         }
         numberOfItems++;
@@ -89,7 +89,7 @@ public class DynamicArray<T> implements IList<T> {
             data[tail] = item;
         } else {
             ++tail;
-            int t = getActualIndex(size());
+            int t = mappedIndex(size());
             data[t] = item;
         }
         numberOfItems++;
@@ -115,8 +115,8 @@ public class DynamicArray<T> implements IList<T> {
     public @NotNull T popFront() throws NoSuchElementException {
         if (isEmpty()) throw new NoSuchElementException("Array is empty");
         if (isBufferNearlyEmpty()) shrinkBufferAndCopyData();
-        T temp = data[getActualIndex(0)];
-        data[getActualIndex(0)] = null;
+        T temp = data[mappedIndex(0)];
+        data[mappedIndex(0)] = null;
         if (size() > 1) ++head;
         --numberOfItems;
         return temp;
@@ -126,8 +126,8 @@ public class DynamicArray<T> implements IList<T> {
     public @NotNull T popBack() throws NoSuchElementException {
         if (isEmpty()) throw new NoSuchElementException("Array is empty");
         if (isBufferNearlyEmpty()) shrinkBufferAndCopyData();
-        T temp = data[getActualIndex(size() - 1)];
-        data[getActualIndex(size() - 1)] = null;
+        T temp = data[mappedIndex(size() - 1)];
+        data[mappedIndex(size() - 1)] = null;
         if (size() > 1) --tail;
         --numberOfItems;
         return temp;
@@ -142,7 +142,7 @@ public class DynamicArray<T> implements IList<T> {
             return popBack();
         }
         T temp = get(index);
-        data[getActualIndex(index)] = null;
+        data[mappedIndex(index)] = null;
         // exchange with null
         if (index <= size() / 2) {
             for (int i = index; i > 0; --i) {
@@ -161,8 +161,8 @@ public class DynamicArray<T> implements IList<T> {
 
     // should be used only with indexes in the range [0, #numberOfELements)
     private void exchange(int i, int j) {
-        int a_i = getActualIndex(i);
-        int a_j = getActualIndex(j);
+        int a_i = mappedIndex(i);
+        int a_j = mappedIndex(j);
         T temp = data[a_i];
         data[a_i] = data[a_j];
         data[a_j] = temp;
@@ -171,7 +171,7 @@ public class DynamicArray<T> implements IList<T> {
     @Override
     public void set(int index, @NotNull T value) throws IndexOutOfBoundsException, NoSuchElementException {
         checkSizeAndBounds(index);
-        data[getActualIndex(index)] = value;
+        data[mappedIndex(index)] = value;
     }
 
     private boolean isBufferFull() {
@@ -187,9 +187,10 @@ public class DynamicArray<T> implements IList<T> {
      */
     private void extendBufferAndCopyData() {
         int numberOfItems = size();
+        @SuppressWarnings("unchecked")
         T[] newData = (T[]) new Object[bufferExtensionScale * bufferSize];
         for (int i = 0; i < numberOfItems; ++i) {
-            newData[i] = data[getActualIndex(i)];
+            newData[i] = data[mappedIndex(i)];
         }
         // update the data
         data = newData;
@@ -207,9 +208,10 @@ public class DynamicArray<T> implements IList<T> {
         int numberOfItems = size();
         int shrinkSize = bufferSize / bufferShrinkScale;
         assert isBufferNearlyEmpty() : "Buffer is not nearly empty";
+        @SuppressWarnings("unchecked")
         T[] newData = (T[]) new Object[shrinkSize];
         for (int i = 0; i < numberOfItems; ++i) {
-            newData[i] = data[getActualIndex(i)];
+            newData[i] = data[mappedIndex(i)];
         }
         // update data
         data = newData;
@@ -228,10 +230,11 @@ public class DynamicArray<T> implements IList<T> {
         if (reserveSize <= size())
             throw new UnsupportedOperationException("Buffer size must be greater than the current size");
         int powerOfTwo = findClosestPowerOfTwoGreaterOrEqualTo(reserveSize);
+        @SuppressWarnings("unchecked")
         T[] newData = (T[]) new Object[powerOfTwo];
         int numberOfItems = size();
         for (int i = 0; i < numberOfItems; ++i) {
-            newData[i] = data[getActualIndex(i)];
+            newData[i] = data[mappedIndex(i)];
         }
         data = newData;
         head = 0;
@@ -250,6 +253,7 @@ public class DynamicArray<T> implements IList<T> {
         return factor;
     }
 
+    @SuppressWarnings("unchecked")
     public void clear() {
         data = (T[]) new Object[initialBufferSize];
         numberOfItems = 0;
@@ -276,7 +280,7 @@ public class DynamicArray<T> implements IList<T> {
             if (!hasNext()) {
                 throw new NoSuchElementException("No more elements");
             }
-            return data[getActualIndex(++current)];
+            return data[mappedIndex(++current)];
         }
     }
 }

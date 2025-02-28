@@ -24,13 +24,13 @@ public class SortableDynamicArray<T extends Comparable<T>> extends ASortableList
     }
 
     @Override
-    public @NotNull T getHead() throws NoSuchElementException {
-        return array.getHead();
+    public @NotNull T head() throws NoSuchElementException {
+        return array.head();
     }
 
     @Override
-    public @NotNull T getTail() throws NoSuchElementException {
-        return array.getTail();
+    public @NotNull T tail() throws NoSuchElementException {
+        return array.tail();
     }
 
     @Override
