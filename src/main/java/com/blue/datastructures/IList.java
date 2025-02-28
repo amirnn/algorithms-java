@@ -37,5 +37,10 @@ public interface IList<T> extends Iterable<T> {
     T popAt(int index) throws IndexOutOfBoundsException;
 
     void set(int index,@NotNull T value) throws IndexOutOfBoundsException;
+
+    void exchange(int source, int target) throws IndexOutOfBoundsException;
+
+    void shuffle();
+
 }
 

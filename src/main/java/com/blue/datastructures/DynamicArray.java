@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class DynamicArray<T> implements IList<T> {
+public class DynamicArray<T> extends AList<T> {
 
     private final int initialBufferSize = 2; // buffer suze
     private final int bufferExtensionScale = 2;
@@ -157,15 +157,6 @@ public class DynamicArray<T> implements IList<T> {
         }
         --numberOfItems;
         return temp;
-    }
-
-    // should be used only with indexes in the range [0, #numberOfELements)
-    private void exchange(int i, int j) {
-        int a_i = mappedIndex(i);
-        int a_j = mappedIndex(j);
-        T temp = data[a_i];
-        data[a_i] = data[a_j];
-        data[a_j] = temp;
     }
 
     @Override

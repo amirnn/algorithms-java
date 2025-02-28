@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class DoublyLinkedList<T> implements IList<T> {
+public class DoublyLinkedList<T> extends AList<T> {
 
     private Node head = null;
     private Node tail = null;
